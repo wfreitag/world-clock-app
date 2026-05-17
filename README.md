@@ -1,5 +1,7 @@
 # World Clock App
 
+[![build](https://github.com/wfreitag/world-clock-app/actions/workflows/build.yml/badge.svg)](https://github.com/wfreitag/world-clock-app/actions/workflows/build.yml)
+
 A minimal desktop clock app built with **Tauri 2 + React + TypeScript**. Toggles between a retro LCD digital view and an analog clock face. Shows up to four clocks at once for comparing time across regions, with city/timezone lookup powered by an offline geo-cities database.
 
 ## Screenshots
@@ -82,6 +84,20 @@ Outputs:
 - **Linux**: `.deb` + `.AppImage`
 
 > Note: The app is not code-signed. On macOS, right-click → Open (or System Settings → Privacy & Security → Open Anyway) to bypass Gatekeeper on first launch.
+
+## Continuous integration
+
+Tauri does not cross-compile — each platform's bundle has to be built on that OS. To produce builds for all three desktop targets without local VMs, this repo includes a GitHub Actions workflow at [`.github/workflows/build.yml`](.github/workflows/build.yml) that runs on every push to `main`, on pull requests, and on manual dispatch.
+
+The workflow uses a matrix of `macos-latest`, `windows-latest`, and `ubuntu-22.04` runners. Each job:
+
+1. Checks out the repo
+2. Installs the platform's webview dependencies (Linux only — macOS and Windows ship them)
+3. Restores Cargo and npm caches
+4. Runs `tauri build` via [`tauri-apps/tauri-action`](https://github.com/tauri-apps/tauri-action)
+5. Uploads the resulting bundle as a downloadable artifact (`world-clock-macos`, `world-clock-windows`, `world-clock-linux`)
+
+Artifacts are retained for 14 days and can be downloaded from the run summary page on GitHub Actions. They are unsigned, same caveat as local builds.
 
 ## Key files
 
