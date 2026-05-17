@@ -99,6 +99,24 @@ The workflow uses a matrix of `macos-latest`, `windows-latest`, and `ubuntu-22.0
 
 Artifacts are retained for 14 days and can be downloaded from the run summary page on GitHub Actions. They are unsigned, same caveat as local builds.
 
+## Releases
+
+For tagged builds that should persist beyond 14 days, push a semver tag and the [`release.yml`](.github/workflows/release.yml) workflow will build all three platforms and attach the binaries to a draft GitHub Release.
+
+```bash
+# Cut a release locally
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+This kicks off the `release` workflow, which:
+
+1. Builds on macOS, Windows, and Linux runners in parallel
+2. Creates (or updates) a **draft** release named `World Clock v0.1.0`
+3. Attaches the `.dmg`/`.app.tar.gz`, `.msi`/`.exe`, and `.deb`/`.AppImage` to that draft
+
+Once all jobs finish, open the release on GitHub, edit notes if needed, and click **Publish release**. You can also trigger the workflow manually from the Actions tab via *Run workflow* and pass an existing tag — useful for re-running a failed release without re-tagging.
+
 ## Key files
 
 | File | Purpose |
